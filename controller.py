@@ -21,22 +21,16 @@ def createUser(username, encrypted_password):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-
-                cur.execute('DROP TABLE IF EXISTS users')
-
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS users (
                         id UUID PRIMARY KEY,
                         username varchar(40) NOT NULL,
                         password varchar(40) NOT NULL
                     );
-                    CREATE EXTENSION "pgcrypto"; 
-
                 '''
                 cur.execute(create_script)
 
                 insert_script = 'INSERT INTO users (id, username, password) VALUES (%s, %s, %s)'
-                user_id = uuid.uuid4()
                 insert_value = (uuid.uuid4(), username, encrypted_password)
                 cur.execute(insert_script, insert_value)
 
