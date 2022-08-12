@@ -21,10 +21,12 @@ def createUser(username, encrypted_password):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                # cur.execute('DROP TABLE IF EXISTS users')
+
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS users (
                         id UUID PRIMARY KEY,
-                        username varchar(40) NOT NULL,
+                        username varchar(40) UNIQUE NOT NULL,
                         password varchar(40) NOT NULL
                     );
                 '''
