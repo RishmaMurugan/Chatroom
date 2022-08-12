@@ -13,7 +13,7 @@ class User(Resource):
         username = request_data["username"]
         password = request_data["password"]
         print(username, password)
-        controller.createUser(2, username, password)
+        controller.createUser(username, password)
         return (username, password)
     def get(self):
         return "Welcome to localhost:5050"

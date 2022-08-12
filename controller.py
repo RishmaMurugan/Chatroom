@@ -1,3 +1,4 @@
+import uuid
 from venv import create
 import psycopg2
 import psycopg2.extras
@@ -9,8 +10,9 @@ password="test1234"
 port_id = 5432
 conn = None
 
-def createUser(user_id, username, encrypted_password):
+def createUser(username, encrypted_password):
     try:
+        psycopg2.extras.register_uuid()
         with psycopg2.connect(
             host = hostname,
             dbname = database,
@@ -19,8 +21,23 @@ def createUser(user_id, username, encrypted_password):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+
+                cur.execute('DROP TABLE IF EXISTS users')
+
+                create_script = ''' 
+                    CREATE TABLE IF NOT EXISTS users (
+                        id UUID PRIMARY KEY,
+                        username varchar(40) NOT NULL,
+                        password varchar(40) NOT NULL
+                    );
+                    CREATE EXTENSION "pgcrypto"; 
+
+                '''
+                cur.execute(create_script)
+
                 insert_script = 'INSERT INTO users (id, username, password) VALUES (%s, %s, %s)'
-                insert_value = (user_id, username, encrypted_password)
+                user_id = uuid.uuid4()
+                insert_value = (uuid.uuid4(), username, encrypted_password)
                 cur.execute(insert_script, insert_value)
 
                 cur.execute('SELECT * FROM USERS')
@@ -33,16 +50,3 @@ def createUser(user_id, username, encrypted_password):
     finally:
         if conn is not None:
             conn.close()
-
-
-
-# cur.execute('DROP TABLE IF EXISTS users')
-
-# create_script = ''' 
-#     CREATE TABLE IF NOT EXISTS users (
-#         id  int PRIMARY KEY,
-#         username varchar(40) NOT NULL,
-#         password varchar(40) NOT NULL
-#     )
-# '''
-# cur.execute(create_script)
