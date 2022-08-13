@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_cors import CORS
 import controller
@@ -12,10 +12,12 @@ class User(Resource):
         request_data = request.get_json(force=True)
         username = request_data["username"]
         password = request_data["password"]
-        print(username, password)
-        controller.createUser(username, password)
+        return controller.createUser(username, password)
     def get(self):
-        return "Welcome to localhost:5050"
+        request_data = request.get_json(force=True)
+        username = request_data["username"]
+        password = request_data["password"]
+        return controller.loginUser(username, password)
 
 api.add_resource(User, '/user')
 if __name__ == '__main__':
