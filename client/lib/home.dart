@@ -13,14 +13,22 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
   @override
   void initState() {
     super.initState();
-    // _getData();
   }
 
   void createUser(String username, String password) async {
     http.Response res = (await ApiService().createUser(username, password));
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+        _showSnackBar('Welcome!');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+    } 
+    else if (res.statusCode == 409) {
+        _showSnackBar('Username already taken.');
+    }
   }
 
   void loginUser(String username, String password) async {
@@ -28,6 +36,12 @@ class _HomeState extends State<Home> {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
   }
 
+  void _showSnackBar(String msg) {
+    final snackBar = SnackBar(
+        content: Text(msg),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
   @override
   Widget build(BuildContext context) {
     TextEditingController usernameController = new TextEditingController();
@@ -56,7 +70,9 @@ class _HomeState extends State<Home> {
               ),
             ),
             ElevatedButton(
-                onPressed: () => createUser(usernameController.text, pwController.text),
+                onPressed: () {
+                    createUser(usernameController.text, pwController.text);
+                },
                 child: const Text('Sign Up'),
             ),
             ElevatedButton(
