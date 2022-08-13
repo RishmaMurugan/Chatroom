@@ -1,7 +1,8 @@
 import uuid
-from venv import create
 import psycopg2
 import psycopg2.extras
+import hashlib
+
 
 def createUser(username, user_pw):
     hostname = "localhost"
@@ -20,17 +21,20 @@ def createUser(username, user_pw):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                # cur.execute('DROP TABLE IF EXISTS users')
+
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS users (
                         id UUID PRIMARY KEY,
                         username varchar(40) UNIQUE NOT NULL,
-                        password varchar(40) NOT NULL
+                        password varchar(64) NOT NULL
                     );
                 '''
                 cur.execute(create_script)
 
                 insert_script = 'INSERT INTO users (id, username, password) VALUES (%s, %s, %s)'
-                insert_value = (uuid.uuid4(), username, user_pw)
+                encoded_pw = hashlib.sha256(user_pw.encode('utf-8')).hexdigest()
+                insert_value = (uuid.uuid4(), username, encoded_pw)
                 cur.execute(insert_script, insert_value)
                 return "Welcome!", 200
 
@@ -61,9 +65,9 @@ def loginUser(username, input_pw):
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 get_pw_script = 'SELECT password FROM users WHERE username=%s'
                 cur.execute(get_pw_script, [username,])
-                correct_pw = cur.fetchone()['password']
-                print(correct_pw, input_pw)
-                if correct_pw == input_pw:
+                encoded_input_pw = hashlib.sha256(input_pw.encode('utf-8')).hexdigest()
+                encoded_correct_pw = cur.fetchone()['password']
+                if encoded_input_pw == encoded_correct_pw:
                     return "Welcome!", 200
                 else: 
                     return "Invalid Login Credentials - Please Try Again", 401
