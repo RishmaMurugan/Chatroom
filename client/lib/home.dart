@@ -18,12 +18,14 @@ class _HomeState extends State<Home> {
     // _getData();
   }
 
-  void createUser() async {
-    http.Response res = (await ApiService().createUser("Alex", "pw1"));
+  void createUser(String username, String password) async {
+    http.Response res = (await ApiService().createUser(username, password));
   }
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController usernameController = new TextEditingController();
+    TextEditingController pwController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Nimble Chatroom'),
@@ -33,12 +35,14 @@ class _HomeState extends State<Home> {
         child: Column(
           children: <Widget>[
             TextField(
+              controller: usernameController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Username',
               ),
             ),
             TextField(
+              controller: pwController,
               obscureText: true,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
@@ -46,7 +50,7 @@ class _HomeState extends State<Home> {
               ),
             ),
             ElevatedButton(
-                onPressed: createUser,
+                onPressed: () => createUser(usernameController.text, pwController.text),
                 child: const Text('Login'),
             ),
           ],
