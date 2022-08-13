@@ -21,7 +21,6 @@ class _HomeState extends State<Home> {
 
   void createUser(String username, String password) async {
     http.Response res = (await ApiService().createUser(username, password));
-    print(res.statusCode);
     if (res.statusCode == 200) {
         _showSnackBar('Welcome!');
         Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
@@ -33,7 +32,13 @@ class _HomeState extends State<Home> {
 
   void loginUser(String username, String password) async {
     http.Response res = (await ApiService().loginUser(username, password));
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+    if (res.statusCode == 200) {
+        _showSnackBar('Welcome!');
+        Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+    } 
+    else {
+        _showSnackBar('Invalid login credentials.');
+    }
   }
 
   void _showSnackBar(String msg) {
