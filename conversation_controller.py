@@ -4,7 +4,7 @@ import psycopg2.extras
 import hashlib
 
 
-def createUser(username, user_pw):
+def createConversation(user_ids):
     hostname = "localhost"
     database = "chatroom"
     user = "postgres"
@@ -21,33 +21,31 @@ def createUser(username, user_pw):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                # cur.execute('DROP TABLE IF EXISTS users')
-
+                cur.execute('DROP TABLE IF EXISTS conversations')
                 create_script = ''' 
-                    CREATE TABLE IF NOT EXISTS users (
+                    CREATE TABLE IF NOT EXISTS conversations (
                         id UUID PRIMARY KEY,
-                        username varchar(40) UNIQUE NOT NULL,
-                        password varchar(64) NOT NULL
-                    );
+                        userIds uuid[] NOT NULL,
+                        messageIds uuid[] NOT NULL
+                    )
                 '''
                 cur.execute(create_script)
-
-                insert_script = 'INSERT INTO users (id, username, password) VALUES (%s, %s, %s)'
-                encoded_pw = hashlib.sha256(user_pw.encode('utf-8')).hexdigest()
-                insert_value = (uuid.uuid4(), username, encoded_pw)
+                insert_script = 'INSERT INTO conversations (id, userIds, messageIds) VALUES (%s, %s, %s)'
+                conversation_id = uuid.uuid4()
+                insert_value = (conversation_id, user_ids, [])
                 cur.execute(insert_script, insert_value)
-                return "Welcome!", 200
+                return conversation_id, 200
 
     except Exception as error:
-        if ("duplicate key value"  in error.args[0]):
-            return "Username already in use", 409
+        print(error.args[0])
         return error.args[0], 400
 
     finally:
         if conn is not None:
             conn.close()
 
-def loginUser(username, input_pw):
+
+def addMessage(message_id, conversation_id):
     hostname = "localhost"
     database = "chatroom"
     user = "postgres"
@@ -55,6 +53,7 @@ def loginUser(username, input_pw):
     port_id = 5432
     conn = None
     try:
+        psycopg2.extras.register_uuid()
         with psycopg2.connect(
             host = hostname,
             dbname = database,
@@ -63,21 +62,19 @@ def loginUser(username, input_pw):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                get_pw_script = 'SELECT password FROM users WHERE username=%s'
-                cur.execute(get_pw_script, [username,])
-                encoded_input_pw = hashlib.sha256(input_pw.encode('utf-8')).hexdigest()
-                encoded_correct_pw = cur.fetchone()['password']
-                if encoded_input_pw == encoded_correct_pw:
-                    return "Welcome!", 200
-                else: 
-                    return "Invalid Login Credentials - Please Try Again", 401
+                insert_script = 'UPDATE conversations SET messageIds=array_append(messageIds,  %s) WHERE id=%s'
+                insert_value = (message_id, conversation_id)
+                cur.execute(insert_script, insert_value)
+                return "Message added", 200
 
     except Exception as error:
-        return "Invalid Login Credentials - Please Try Again", 401
+        return error.args[0], 400
 
     finally:
         if conn is not None:
             conn.close()
+
+
 
 
 # cur.execute('DROP TABLE IF EXISTS users')

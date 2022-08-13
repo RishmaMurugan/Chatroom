@@ -1,7 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_restful import Resource, Api
 from flask_cors import CORS
-import controller
+import uuid
+import user_controller
+import conversation_controller
+import message_controller
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"*": {"origins": "*"}})
@@ -12,13 +15,56 @@ class User(Resource):
         request_data = request.get_json(force=True)
         username = request_data["username"]
         password = request_data["password"]
-        return controller.createUser(username, password)
-    def get(self):
+        return user_controller.createUser(username, password)
+    def patch(self):
         request_data = request.get_json(force=True)
         username = request_data["username"]
         password = request_data["password"]
-        return controller.loginUser(username, password)
+        return user_controller.loginUser(username, password)
+    def get(self):
+        request_data = request.get_json(force=True)
+        username = request_data["username"]
+        return user_controller.getUserId(username)
+
+class Conversation(Resource):
+    def post(self):
+        request_data = request.get_json(force=True)
+        recipient_usernames = request_data["usernames"]
+        sender_username = request_data["sender_username"]
+        content = request_data["content"]
+        user_ids = []
+        for username in recipient_usernames:
+            user_id = user_controller.getUserId(username)
+            if (user_id[1] == 200):
+                user_ids.append(uuid.UUID(user_id[0]))
+        sender_id = user_controller.getUserId(sender_username)
+        if (sender_id[1] == 200):
+            user_ids.append(uuid.UUID(sender_id[0]))
+        res = conversation_controller.createConversation(user_ids)
+        if (res[1] == 200):
+            conversation_id = res[0]
+            message_status = message_controller.createMessage(sender_id, content)
+            if (message_status[1] == 200):
+                return conversation_controller.addMessage(message_status[0], conversation_id)
+            else:
+                return "Error creating message", 400
+        else:
+            return "Error creating conversation", 400
+
+class Message(Resource):
+    def post(self):
+        request_data = request.get_json(force=True)
+        senderUsername = request_data["senderUsername"]
+        sender_id = user_controller.getUserId(senderUsername)
+        content = request_data["content"]
+        res = message_controller.createMessage(sender_id, content)
+        if (res[1] == 200):
+            message_id = res[0]
+     
 
 api.add_resource(User, '/user')
+api.add_resource(Conversation, '/conversation')
+api.add_resource(Message, '/message')
+
 if __name__ == '__main__':
     app.run(debug=True)
