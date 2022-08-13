@@ -52,13 +52,13 @@ class Conversation(Resource):
 
     def patch (self):
         request_data = request.get_json(force=True)
-        conversation_id = request_data["conversationId"]
-        sender_username = request_data["senderId"]
-        sender_id = user_controller.getUserId(sender_username)
-        if (sender_id[1] != 200):
+        conversation_id = request_data["conversation_id"]
+        sender_username = request_data["sender_username"]
+        sender_id_status = user_controller.getUserId(sender_username)
+        if (sender_id_status[1] != 200):
             return "Error sending message", 400
         content = request_data["content"]
-        message_status = message_controller.createMessage(sender_id, content)
+        message_status = message_controller.createMessage(sender_id_status[0], content)
         if (message_status[1] == 200):
             return conversation_controller.addMessage(message_status[0], conversation_id)
         else:

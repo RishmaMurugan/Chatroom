@@ -22,7 +22,7 @@ def createMessage(sender_id, content):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute('DROP TABLE IF EXISTS messages')
+                # cur.execute('DROP TABLE IF EXISTS messages')
 
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS messages (
@@ -40,7 +40,6 @@ def createMessage(sender_id, content):
                 return message_id, 200
 
     except Exception as error:
-        # print(error)
         return error.args[0], 400
 
     finally:

@@ -64,11 +64,13 @@ def addMessage(message_id, conversation_id):
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 insert_script = 'UPDATE conversations SET messageIds=array_append(messageIds,  %s) WHERE id=%s'
+                print(conversation_id)
                 insert_value = (message_id, conversation_id)
                 cur.execute(insert_script, insert_value)
                 return "Message added", 200
 
     except Exception as error:
+        print(error)
         return error.args[0], 400
 
     finally:
