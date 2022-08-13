@@ -18,5 +18,17 @@ class ApiService {
         }),
     );
 }
-  
+Future<http.Response> loginUser(String name, String password) {
+    return http.patch(
+        Uri.parse('http://127.0.0.1:5000/user'),
+        headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+            'username': name,
+            'password': password
+        }),
+    );
+}
+
 }

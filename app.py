@@ -12,9 +12,7 @@ api = Api(app)
 
 class User(Resource):
     def post(self):
-        print("hellooo")
         request_data = request.get_json(force=True)
-        print(request_data)
         username = request_data["username"]
         password = request_data["password"]
         return user_controller.createUser(username, password)

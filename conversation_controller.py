@@ -69,7 +69,6 @@ def addMessage(message_id, conversation_id):
                 return "Message added", 200
 
     except Exception as error:
-        print(error)
         return error.args[0], 400
 
     finally:

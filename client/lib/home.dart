@@ -22,6 +22,11 @@ class _HomeState extends State<Home> {
     http.Response res = (await ApiService().createUser(username, password));
   }
 
+  void loginUser(String username, String password) async {
+    http.Response res = (await ApiService().loginUser(username, password));
+    print(res);
+  }
+
   @override
   Widget build(BuildContext context) {
     TextEditingController usernameController = new TextEditingController();
@@ -51,6 +56,10 @@ class _HomeState extends State<Home> {
             ),
             ElevatedButton(
                 onPressed: () => createUser(usernameController.text, pwController.text),
+                child: const Text('Sign Up'),
+            ),
+            ElevatedButton(
+                onPressed: () => loginUser(usernameController.text, pwController.text),
                 child: const Text('Login'),
             ),
           ],
