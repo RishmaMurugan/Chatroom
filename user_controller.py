@@ -97,14 +97,13 @@ def getUserId(username):
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
                 # cur.execute('DROP TABLE IF EXISTS users')
-                get_user_id_script = 'SELECT id FROM users WHERE username=%s'
-                cur.execute(get_user_id_script, [username])
-                id = cur.fetchone()
+                get_pw_script = 'SELECT id FROM users WHERE username=%s'
+                cur.execute(get_pw_script, (username, ))
+                id = cur.fetchone()['id']
                 if id is not None:
-                    return str(id['id']),200
+                    return str(id), 200
                 else:
                     return "Invalid username", 401
-
 
     except Exception as error:
         return error.args[0], 400

@@ -34,28 +34,42 @@ class Conversation(Resource):
         content = request_data["content"]
         user_ids = []
         for username in recipient_usernames:
-            user_id = user_controller.getUserId(username)
-            if (user_id[1] == 200):
-                user_ids.append(uuid.UUID(user_id[0]))
-        sender_id = user_controller.getUserId(sender_username)
-        if (sender_id[1] == 200):
-            user_ids.append(uuid.UUID(sender_id[0]))
-        res = conversation_controller.createConversation(user_ids)
-        if (res[1] == 200):
-            conversation_id = res[0]
-            message_status = message_controller.createMessage(sender_id, content)
-            if (message_status[1] == 200):
-                return conversation_controller.addMessage(message_status[0], conversation_id)
-            else:
-                return "Error creating message", 400
+            user_id_status = user_controller.getUserId(username)
+            if (user_id_status[1] == 200):
+                user_ids.append(uuid.UUID(user_id_status[0]))
+            else: 
+                return "Error getting recipient information", 400
+        sender_id_status = user_controller.getUserId(sender_username)
+        if (sender_id_status[1] == 200):
+            user_ids.append(uuid.UUID(sender_id_status[0]))
+        else: 
+            return "Error getting sender information", 400
+        message_status = message_controller.createMessage(sender_id_status[0], content)
+        if (message_status[1] == 200):
+            return conversation_controller.createConversation(user_ids, message_status[0])
         else:
-            return "Error creating conversation", 400
+            return "Error sending message", 400
+
+    def patch (self):
+        request_data = request.get_json(force=True)
+        conversation_id = request_data["conversationId"]
+        sender_username = request_data["senderId"]
+        sender_id = user_controller.getUserId(sender_username)
+        if (sender_id[1] != 200):
+            return "Error sending message", 400
+        content = request_data["content"]
+        message_status = message_controller.createMessage(sender_id, content)
+        if (message_status[1] == 200):
+            return conversation_controller.addMessage(message_status[0], conversation_id)
+        else:
+            return "Error sending message", 400
+
 
 class Message(Resource):
     def post(self):
         request_data = request.get_json(force=True)
-        senderUsername = request_data["senderUsername"]
-        sender_id = user_controller.getUserId(senderUsername)
+        sender_username = request_data["senderUsername"]
+        sender_id = user_controller.getUserId(sender_username)
         content = request_data["content"]
         res = message_controller.createMessage(sender_id, content)
         if (res[1] == 200):

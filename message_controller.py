@@ -5,7 +5,7 @@ import psycopg2.extras
 import hashlib
 
 
-def createMessage(senderId, content):
+def createMessage(sender_id, content):
     hostname = "localhost"
     database = "chatroom"
     user = "postgres"
@@ -28,18 +28,19 @@ def createMessage(senderId, content):
                     CREATE TABLE IF NOT EXISTS messages (
                         id UUID PRIMARY KEY,
                         content text NOT NULL,
-                        sendTime TIMESTAMP NOT NULL
+                        sendTime TIMESTAMP NOT NULL,
+                        senderId UUID NOT NULL
                     )
                 '''
                 cur.execute(create_script)
-                insert_script = 'INSERT INTO messages (id, content, sendTime) VALUES (%s, %s, %s)'
+                insert_script = 'INSERT INTO messages (id, content, sendTime, senderId) VALUES (%s, %s, %s, %s)'
                 message_id = uuid.uuid4()
-                insert_value = (message_id, content, datetime.now())
+                insert_value = (message_id, content, datetime.now(), sender_id)
                 cur.execute(insert_script, insert_value)
                 return message_id, 200
 
     except Exception as error:
-        print(error)
+        # print(error)
         return error.args[0], 400
 
     finally:

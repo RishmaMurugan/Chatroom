@@ -4,7 +4,7 @@ import psycopg2.extras
 import hashlib
 
 
-def createConversation(user_ids):
+def createConversation(user_ids, initialMessageId):
     hostname = "localhost"
     database = "chatroom"
     user = "postgres"
@@ -32,12 +32,13 @@ def createConversation(user_ids):
                 cur.execute(create_script)
                 insert_script = 'INSERT INTO conversations (id, userIds, messageIds) VALUES (%s, %s, %s)'
                 conversation_id = uuid.uuid4()
-                insert_value = (conversation_id, user_ids, [])
+                messageIds = []
+                messageIds.append(initialMessageId)
+                insert_value = (conversation_id, user_ids, messageIds)
                 cur.execute(insert_script, insert_value)
-                return conversation_id, 200
+                return str(conversation_id), 200
 
     except Exception as error:
-        print(error.args[0])
         return error.args[0], 400
 
     finally:
