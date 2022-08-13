@@ -27,7 +27,8 @@ def createUser(username, user_pw):
                     CREATE TABLE IF NOT EXISTS users (
                         id UUID PRIMARY KEY,
                         username varchar(40) UNIQUE NOT NULL,
-                        password varchar(64) NOT NULL
+                        password varchar(64) NOT NULL,
+                        conversationIds uuid[] 
                     );
                 '''
                 cur.execute(create_script)
@@ -96,7 +97,6 @@ def getUserId(username):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                # cur.execute('DROP TABLE IF EXISTS users')
                 get_pw_script = 'SELECT id FROM users WHERE username=%s'
                 cur.execute(get_pw_script, (username, ))
                 id = cur.fetchone()['id']
@@ -106,6 +106,38 @@ def getUserId(username):
                     return "Invalid username", 401
 
     except Exception as error:
+        return error.args[0], 400
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+def addConversationToUser(user_id, conversation_id):
+    hostname = "localhost"
+    database = "chatroom"
+    user = "postgres"
+    db_password="test1234"
+    port_id = 5432
+    conn = None
+    try:
+        psycopg2.extras.register_uuid()
+        with psycopg2.connect(
+            host = hostname,
+            dbname = database,
+            user = user,
+            password = db_password,
+            port = port_id) as conn: 
+
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                # cur.execute('DROP TABLE IF EXISTS users')
+                insert_script = 'UPDATE users SET conversationIds=array_append(conversationIds,  %s) WHERE id=%s'
+                insert_value = (conversation_id, user_id)
+                cur.execute(insert_script, insert_value)
+                return "Conversation added", 200
+
+    except Exception as error:
+        if ("duplicate key value"  in error.args[0]):
+            return "Username already in use", 409
         return error.args[0], 400
 
     finally:

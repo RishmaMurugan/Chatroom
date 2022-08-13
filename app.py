@@ -46,7 +46,13 @@ class Conversation(Resource):
             return "Error getting sender information", 400
         message_status = message_controller.createMessage(sender_id_status[0], content)
         if (message_status[1] == 200):
-            return conversation_controller.createConversation(user_ids, message_status[0])
+            conversation_status = conversation_controller.createConversation(user_ids, message_status[0])
+            if (conversation_status[1] == 200):
+                for user_id in user_ids:
+                    addConvoStatus = user_controller.addConversationToUser(user_id, conversation_status[0])
+                    if (addConvoStatus[1] != 200): 
+                        return "Error adding conversation to user profile", 400
+                return "Success sending message", 200
         else:
             return "Error sending message", 400
 
