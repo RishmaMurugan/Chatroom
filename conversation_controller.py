@@ -21,7 +21,7 @@ def createConversation(user_ids, initialMessageId):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                cur.execute('DROP TABLE IF EXISTS conversations')
+                # cur.execute('DROP TABLE IF EXISTS conversations')
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS conversations (
                         id UUID PRIMARY KEY,
