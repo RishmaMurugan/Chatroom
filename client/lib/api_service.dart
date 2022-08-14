@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:client/constants.dart';
-import 'package:client/user_model.dart';
 
 class ApiService {
   Future<http.Response> createUser(String username, String password) {

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:client/user_model.dart';
 import 'package:client/user_home.dart';
 import 'package:client/api_service.dart';
 import 'package:http/http.dart' as http;

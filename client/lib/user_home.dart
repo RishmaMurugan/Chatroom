@@ -1,33 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:client/user_model.dart';
+import 'package:client/message_screen.dart';
+import 'package:client/conversation_model.dart';
 import 'package:client/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
-
-class Conversation {
-  final id;
-  final messageIds;
-  final usernames;
-
-  const Conversation(this.id, this.messageIds, this.usernames);
-}
-
-class Message {
-  final id;
-  final content;
-  final sendTime;
-  final senderUsername;
-
-  const Message(this.id, this.content, this.sendTime, this.senderUsername);
-}
 
 class UserHome extends StatelessWidget {
   UserHome({super.key, required this.username});
 
   final String username;
   List<Conversation> conversations = [];
-  List<Message> messages = [];
+  Conversation? selectedConversation = new Conversation("", "", "");
 
   Future<List<Conversation>> getConversations(String username) async {
     http.Response res = (await ApiService().getConversationIds(username));
@@ -42,21 +26,6 @@ class UserHome extends StatelessWidget {
       return conversations;
     }
     return [];
-  }
-
-  Future<List<Message>> getMessages(Conversation? conversation) async {
-    if (conversation == null) {
-      return messages;
-    }
-    for (final messageId in conversation.messageIds) {
-      http.Response res = (await ApiService().getMessage(messageId));
-      if (res.statusCode == 200) {
-        var messageJson = json.decode(res.body);
-        var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
-        messages.add(message);
-      }
-    }
-    return messages;
   }
 
   @override
@@ -81,39 +50,25 @@ class UserHome extends StatelessWidget {
                       itemCount: data?.length,
                       itemBuilder: (context, index) {
                         String s = "";
-                        for (var participantUsername in data?[index].usernames) {
+                        bool isGroupChat = data?[index].usernames?.length > 2;
+                        int numPeople = 0;
+                        for (int i = 0; i < data?[index].usernames.length; i++) {
+                          var participantUsername = data?[index].usernames[i];
                           if (participantUsername != this.username) {
+                            numPeople++;
                             s += participantUsername.toString() + " ";
-                          }
-                        }
-                        return ListTile(
-                          title: Text(s),
-                          onTap: () => getMessages(data?[index]),
-                        );
-                      }
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: SizedBox(
-                    child: new ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: data?.length,
-                      itemBuilder: (context, index) {
-                        String s = "";
-                        for (var participantUsername in data?[index].usernames) {
-                          if (participantUsername != this.username) {
-                            s += participantUsername.toString() + " ";
+                            if (isGroupChat && numPeople != data?[index].usernames.length - 1) {
+                              s += "+ ";
+                            }
                           }
                         }
                         return ListTile(
                           title: Text(s),
                           onTap: () {
+                            selectedConversation = data?[index];
                             Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                builder: (context) => UserHome(username: this.username),
-                              ),
+                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation)),
                             );
                           },
                         );
