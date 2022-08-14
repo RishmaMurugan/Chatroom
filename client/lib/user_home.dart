@@ -49,8 +49,10 @@ class UserHome extends StatelessWidget {
               itemCount: data?.length,
               itemBuilder: (context, index) {
                 String s = "";
-                for (var username in data?[index].usernames) {
-                  s += username.toString() + " ";
+                for (var participantUsername in data?[index].usernames) {
+                  if (participantUsername != this.username) {
+                    s += participantUsername.toString() + " ";
+                  }
                 }
                 return Text(s);
             });
