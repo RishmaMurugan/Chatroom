@@ -17,6 +17,7 @@ class MessageScreen extends StatelessWidget {
       http.Response res = (await ApiService().getMessage(messageId));
       if (res.statusCode == 200) {
         var messageJson = json.decode(res.body);
+        print(messageJson);
         var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
         messages.add(message);
       }
@@ -45,9 +46,10 @@ class MessageScreen extends StatelessWidget {
                       scrollDirection: Axis.vertical,
                       itemCount: data?.length,
                       itemBuilder: (context, index) {
-                        String s = data?[index].content;
+                        String sender = data?[index].senderUsername ;
+                        String content = data?[index].content ;
                         return ListTile(
-                          title: Text(s),
+                          title: Text(sender + ": " + content),
                         );
                       }
                     ),

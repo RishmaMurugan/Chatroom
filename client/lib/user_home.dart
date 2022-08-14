@@ -76,6 +76,9 @@ class UserHome extends StatelessWidget {
                     ),
                   ),
                 ),
+                // Flexible(
+                //   child: MessageScreen(conversation: selectedConversation)
+                // )
               ],
             );
           } else if (snapshot.hasError) {
