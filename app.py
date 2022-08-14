@@ -97,6 +97,22 @@ class Message(Resource):
         res = message_controller.createMessage(sender_id, content)
         if (res[1] == 200):
             message_id = res[0]
+    
+    def get (self):
+        request_data = request.args
+        id = request_data["id"]
+        response_status = message_controller.getMessage(id)
+        if (response_status[1] == 200):
+            username_status = user_controller.getUsername(response_status[0]['senderId'])
+            if (username_status[1] == 200):
+                return {"id": id, "content": response_status[0]['content'], 
+                    "sendTime": response_status[0]['sendTime'], "senderUsername": username_status[0]}, 200
+            else: 
+                return "Error getting sender information", 400
+        else:
+            return "Error getting message", 400
+
+    
      
 
 api.add_resource(User, '/user')

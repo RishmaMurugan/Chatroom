@@ -46,5 +46,46 @@ def createMessage(sender_id, content):
             conn.close()
 
 
+def getMessage(message_id):
+    hostname = "localhost"
+    database = "chatroom"
+    user = "postgres"
+    db_password="test1234"
+    port_id = 5432
+    conn = None
+    try:
+        psycopg2.extras.register_uuid()
+        with psycopg2.connect(
+            host = hostname,
+            dbname = database,
+            user = user,
+            password = db_password,
+            port = port_id) as conn: 
+        
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                get_pw_script = 'SELECT id, content, sendTime, senderId FROM messages WHERE id=%s'
+                cur.execute(get_pw_script, (message_id, ))
+                res = cur.fetchall()
+                print(res)
+                # message_ids = []
+                # for user_id in res[0][1]:
+                #     user_ids.append(str(user_id))
+                # message_ids = []
+                # for message_id in res[0][2]:
+                #     message_ids.append(str(message_id))
+                conversation = {"id": str(res[0][0]), "content": res[0][1], "sendTime": str(res[0][2]), "senderId": str(res[0][3])}
+                print(conversation)
+                if res is not None:
+                    return conversation, 200
+                else:
+                    return "Invalid username", 401
+    except Exception as error:
+        return error.args[0], 400
+
+    finally:
+        if conn is not None:
+            conn.close()
+
+
 
 # cur.execute('DROP TABLE IF EXISTS users')

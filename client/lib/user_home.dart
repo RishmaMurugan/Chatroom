@@ -12,11 +12,22 @@ class Conversation {
 
   const Conversation(this.id, this.messageIds, this.usernames);
 }
+
+class Message {
+  final id;
+  final content;
+  final sendTime;
+  final senderUsername;
+
+  const Message(this.id, this.content, this.sendTime, this.senderUsername);
+}
+
 class UserHome extends StatelessWidget {
   UserHome({super.key, required this.username});
 
   final String username;
   List<Conversation> conversations = [];
+  List<Message> messages = [];
 
   Future<List<Conversation>> getConversations(String username) async {
     http.Response res = (await ApiService().getConversationIds(username));
@@ -26,12 +37,26 @@ class UserHome extends StatelessWidget {
         http.Response res2 = (await ApiService().getConversations(conversationId));
         var conversationJson = json.decode(res2.body);
         var conversation = new Conversation(conversationJson['id'], conversationJson['message_ids'], conversationJson['usernames']);
-        print(conversationJson['usernames']);
         conversations.add(conversation);
       }
       return conversations;
     }
     return [];
+  }
+
+  Future<List<Message>> getMessages(Conversation? conversation) async {
+    if (conversation == null) {
+      return messages;
+    }
+    for (final messageId in conversation.messageIds) {
+      http.Response res = (await ApiService().getMessage(messageId));
+      if (res.statusCode == 200) {
+        var messageJson = json.decode(res.body);
+        var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
+        messages.add(message);
+      }
+    }
+    return messages;
   }
 
   @override
@@ -45,30 +70,59 @@ class UserHome extends StatelessWidget {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Conversation>? data = snapshot.data;
-            return ListView.builder(
-              itemCount: data?.length,
-              itemBuilder: (context, index) {
-                String s = "";
-                for (var participantUsername in data?[index].usernames) {
-                  if (participantUsername != this.username) {
-                    s += participantUsername.toString() + " ";
-                  }
-                }
-                return ListTile(
-                  title: Text(s),
-                  // When a user taps the ListTile, navigate to the DetailScreen.
-                  // Notice that you're not only creating a DetailScreen, you're
-                  // also passing the current todo through to it.
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserHome(username: this.username),
-                      ),
-                    );
-                  },
-                );
-            });
+            return Row(
+              children: <Widget>[
+                  //some widgets        
+                Flexible(
+                  child: SizedBox(
+                    width: 200.0,
+                    child: new ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: data?.length,
+                      itemBuilder: (context, index) {
+                        String s = "";
+                        for (var participantUsername in data?[index].usernames) {
+                          if (participantUsername != this.username) {
+                            s += participantUsername.toString() + " ";
+                          }
+                        }
+                        return ListTile(
+                          title: Text(s),
+                          onTap: () => getMessages(data?[index]),
+                        );
+                      }
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    child: new ListView.builder(
+                      scrollDirection: Axis.vertical,
+                      itemCount: data?.length,
+                      itemBuilder: (context, index) {
+                        String s = "";
+                        for (var participantUsername in data?[index].usernames) {
+                          if (participantUsername != this.username) {
+                            s += participantUsername.toString() + " ";
+                          }
+                        }
+                        return ListTile(
+                          title: Text(s),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UserHome(username: this.username),
+                              ),
+                            );
+                          },
+                        );
+                      }
+                    ),
+                  ),
+                ),
+              ],
+            );
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }

@@ -40,4 +40,9 @@ Future<http.Response> getConversations(String id) {
         Uri.parse('http://127.0.0.1:5000/conversation?id=$id'),
     );
 }
+Future<http.Response> getMessage(String id) {
+    return http.get(
+        Uri.parse('http://127.0.0.1:5000/message?id=$id'),
+    );
+}
 }
