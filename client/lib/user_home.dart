@@ -8,9 +8,9 @@ import 'dart:convert';
 class Conversation {
   final id;
   final messageIds;
-  final userIds;
+  final usernames;
 
-  const Conversation(this.id, this.messageIds, this.userIds);
+  const Conversation(this.id, this.messageIds, this.usernames);
 }
 class UserHome extends StatelessWidget {
   UserHome({super.key, required this.username});
@@ -25,7 +25,8 @@ class UserHome extends StatelessWidget {
       for (final conversationId in conversationIdsObj['conversation_ids']) {
         http.Response res2 = (await ApiService().getConversations(conversationId));
         var conversationJson = json.decode(res2.body);
-        var conversation = new Conversation(conversationJson['id'], conversationJson['message_ids'], conversationJson['user_ids']);
+        var conversation = new Conversation(conversationJson['id'], conversationJson['message_ids'], conversationJson['usernames']);
+        print(conversationJson['usernames']);
         conversations.add(conversation);
       }
       return conversations;
@@ -47,7 +48,11 @@ class UserHome extends StatelessWidget {
             return ListView.builder(
               itemCount: data?.length,
               itemBuilder: (context, index) {
-                return Text(data?[index].id);
+                String s = "";
+                for (var username in data?[index].usernames) {
+                  s += username.toString() + " ";
+                }
+                return Text(s);
             });
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");

@@ -112,6 +112,38 @@ def getUserId(username):
         if conn is not None:
             conn.close()
 
+def getUsername(id):
+    hostname = "localhost"
+    database = "chatroom"
+    user = "postgres"
+    db_password="test1234"
+    port_id = 5432
+    conn = None
+    try:
+        psycopg2.extras.register_uuid()
+        with psycopg2.connect(
+            host = hostname,
+            dbname = database,
+            user = user,
+            password = db_password,
+            port = port_id) as conn: 
+        
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                get_pw_script = 'SELECT username FROM users WHERE id=%s'
+                cur.execute(get_pw_script, (id, ))
+                username = cur.fetchone()['username']
+                if username is not None:
+                    return str(username), 200
+                else:
+                    return "Invalid username", 401
+
+    except Exception as error:
+        return error.args[0], 400
+
+    finally:
+        if conn is not None:
+            conn.close()
+
 def addConversationToUser(user_id, conversation_id):
     hostname = "localhost"
     database = "chatroom"

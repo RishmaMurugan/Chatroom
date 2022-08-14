@@ -79,7 +79,12 @@ class Conversation(Resource):
         id = request_data["id"]
         response_status = conversation_controller.getConversation(id)
         if (response_status[1] == 200):
-            return response_status[0], 200
+            usernames = []
+            for user_id in response_status[0]['user_ids']:
+                username_status = user_controller.getUsername(user_id)
+                if (username_status[1] == 200):
+                    usernames.append(username_status[0])
+            return {"id": id, "usernames": usernames, "message_ids": response_status[0]['message_ids']}, 200
         else:
             return "Error getting conversations", 400
 
