@@ -22,9 +22,13 @@ class User(Resource):
         password = request_data["password"]
         return user_controller.loginUser(username, password)
     def get(self):
-        request_data = request.get_json(force=True)
+        request_data = request.args
         username = request_data["username"]
-        return user_controller.getUserId(username)
+        response_status = user_controller.getUserConversations(username)
+        if (response_status[1] == 200):
+            return jsonify(response_status[0])
+        else:
+            return "Error getting conversations", 400
 
 class Conversation(Resource):
     def post(self):
@@ -69,7 +73,15 @@ class Conversation(Resource):
             return conversation_controller.addMessage(message_status[0], conversation_id)
         else:
             return "Error sending message", 400
-
+    
+    def get (self):
+        request_data = request.args
+        id = request_data["id"]
+        response_status = conversation_controller.getConversation(id)
+        if (response_status[1] == 200):
+            return response_status[0], 200
+        else:
+            return "Error getting conversations", 400
 
 class Message(Resource):
     def post(self):

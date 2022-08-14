@@ -13,7 +13,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-
+  String _username = "";
   @override
   void initState() {
     super.initState();
@@ -23,7 +23,14 @@ class _HomeState extends State<Home> {
     http.Response res = (await ApiService().createUser(username, password));
     if (res.statusCode == 200) {
         _showSnackBar('Welcome!');
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+        setState(() {
+            _username = username;
+        });
+        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserHome(username: username)),
+        );
     } 
     else if (res.statusCode == 409) {
         _showSnackBar('Username already taken.');
@@ -34,7 +41,10 @@ class _HomeState extends State<Home> {
     http.Response res = (await ApiService().loginUser(username, password));
     if (res.statusCode == 200) {
         _showSnackBar('Welcome!');
-        Navigator.of(context).push(MaterialPageRoute(builder: (context) => UserHome()));
+        Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => UserHome(username: username)),
+        );
     } 
     else {
         _showSnackBar('Invalid login credentials.');

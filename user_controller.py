@@ -144,5 +144,40 @@ def addConversationToUser(user_id, conversation_id):
         if conn is not None:
             conn.close()
 
+def getUserConversations(username):
+    hostname = "localhost"
+    database = "chatroom"
+    user = "postgres"
+    db_password="test1234"
+    port_id = 5432
+    conn = None
+    try:
+        psycopg2.extras.register_uuid()
+        with psycopg2.connect(
+            host = hostname,
+            dbname = database,
+            user = user,
+            password = db_password,
+            port = port_id) as conn: 
+        
+            with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
+                get_conversation_id_script = 'SELECT conversationIds FROM users WHERE username=%s'
+                cur.execute(get_conversation_id_script, (username, ))
+                ids = cur.fetchone()[0]
+                res = []
+                for id in ids:
+                    res.append(str(id))
+                conversation_ids = {"conversation_ids": res}
+                if ids is not None:
+                    return conversation_ids, 200
+                else:
+                    return "Invalid username", 401
+
+    except Exception as error:
+        return error.args[0], 400
+
+    finally:
+        if conn is not None:
+            conn.close()
 
 # cur.execute('DROP TABLE IF EXISTS users')

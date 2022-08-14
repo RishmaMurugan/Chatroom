@@ -2,67 +2,58 @@ import 'package:flutter/material.dart';
 import 'package:client/user_model.dart';
 import 'package:client/api_service.dart';
 import 'package:http/http.dart' as http;
+import 'package:uuid/uuid.dart';
+import 'dart:convert';
 
+class Conversation {
+  final id;
+  final messageIds;
+  final userIds;
 
-class UserHome extends StatefulWidget {
-  const UserHome({Key? key}) : super(key: key);
-
-  @override
-  _UserHomeState createState() => _UserHomeState();
+  const Conversation(this.id, this.messageIds, this.userIds);
 }
+class UserHome extends StatelessWidget {
+  UserHome({super.key, required this.username});
 
-class _UserHomeState extends State<UserHome> {
-  @override
-  void initState() {
-    super.initState();
-    // _getData();
-  }
+  final String username;
+  List<Conversation> conversations = [];
 
-  void createUser(String username, String password) async {
-    http.Response res = (await ApiService().createUser(username, password));
-  }
-
-  void loginUser(String username, String password) async {
-    http.Response res = (await ApiService().loginUser(username, password));
+  Future<List<Conversation>> getConversations(String username) async {
+    http.Response res = (await ApiService().getConversationIds(username));
+    if (res.statusCode == 200) {
+      var conversationIdsObj = json.decode(res.body);
+      for (final conversationId in conversationIdsObj['conversation_ids']) {
+        http.Response res2 = (await ApiService().getConversations(conversationId));
+        var conversationJson = json.decode(res2.body);
+        var conversation = new Conversation(conversationJson['id'], conversationJson['message_ids'], conversationJson['user_ids']);
+        conversations.add(conversation);
+      }
+      return conversations;
+    }
+    return [];
   }
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController usernameController = new TextEditingController();
-    TextEditingController pwController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Chatroom Screen 2'),
+        title: const Text('Messages'),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: usernameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Username',
-              ),
-            ),
-            TextField(
-              controller: pwController,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
-            ),
-            ElevatedButton(
-                onPressed: () => createUser(usernameController.text, pwController.text),
-                child: const Text('Sign Up'),
-            ),
-            ElevatedButton(
-                onPressed: () => loginUser(usernameController.text, pwController.text),
-                child: const Text('Login'),
-            ),
-          ],
-        )
+      body: FutureBuilder<List<Conversation>>(
+        future:  getConversations(this.username),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            List<Conversation>? data = snapshot.data;
+            return ListView.builder(
+              itemCount: data?.length,
+              itemBuilder: (context, index) {
+                return Text(data?[index].id);
+            });
+          } else if (snapshot.hasError) {
+            return Text("${snapshot.error}");
+          }
+          return CircularProgressIndicator();
+        }
       )
     );
   }
