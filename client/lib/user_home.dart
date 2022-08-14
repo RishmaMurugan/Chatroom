@@ -54,7 +54,20 @@ class UserHome extends StatelessWidget {
                     s += participantUsername.toString() + " ";
                   }
                 }
-                return Text(s);
+                return ListTile(
+                  title: Text(s),
+                  // When a user taps the ListTile, navigate to the DetailScreen.
+                  // Notice that you're not only creating a DetailScreen, you're
+                  // also passing the current todo through to it.
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserHome(username: this.username),
+                      ),
+                    );
+                  },
+                );
             });
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
