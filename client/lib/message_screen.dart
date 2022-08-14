@@ -6,18 +6,27 @@ import 'dart:convert';
 import 'package:client/message_model.dart';
 import 'package:client/conversation_model.dart';
 
-class MessageScreen extends StatelessWidget {
-  MessageScreen({super.key, this.conversation});
-
+class MessageScreen extends StatefulWidget {
   final Conversation? conversation;
-  List<Message> messages = [];
+  final String senderUsername;
+  const MessageScreen({Key? key, this.conversation, required this.senderUsername}) : super(key: key);
+
+  @override
+  _MessageScreenState createState() => _MessageScreenState();
+}
+
+class _MessageScreenState extends State<MessageScreen> {
+  final List<Message> messages = [];
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<List<Message>> getMessages() async {
-    for (final messageId in conversation?.messageIds) {
+    for (final messageId in widget.conversation?.messageIds) {
       http.Response res = (await ApiService().getMessage(messageId));
       if (res.statusCode == 200) {
         var messageJson = json.decode(res.body);
-        print(messageJson);
         var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
         messages.add(message);
       }
@@ -25,8 +34,23 @@ class MessageScreen extends StatelessWidget {
     return messages;
   }
 
+  void sendMessage(String senderUsername, String conversationId, String content) async {
+    http.Response res = (await ApiService().sendMessage(senderUsername, conversationId, content));
+    if (res.statusCode == 200) {
+      var messageId = json.decode(res.body);
+      var message = new Message(messageId, content, DateTime.now(), senderUsername);
+      setState((){
+        messages.add(message);
+      });
+    } 
+    else  {
+      print('Error.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController messageController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Message Screen'),
@@ -54,7 +78,22 @@ class MessageScreen extends StatelessWidget {
                       }
                     ),
                   ),
-                )
+                ),
+                Flexible(
+                  child: TextField(
+                    controller: messageController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Send a message',
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    sendMessage(widget.senderUsername, widget.conversation?.id, messageController.text);
+                  },
+                  child: const Text('Send'),
+                ),
               ]
             );
           } else if (snapshot.hasError) {

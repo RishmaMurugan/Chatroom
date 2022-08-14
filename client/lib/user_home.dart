@@ -68,7 +68,7 @@ class UserHome extends StatelessWidget {
                             selectedConversation = data?[index];
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation)),
+                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: this.username)),
                             );
                           },
                         );
