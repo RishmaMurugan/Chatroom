@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
     TextEditingController pwController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NimbleChat', style: TextStyle(fontSize: 25),),
+        title: const Text('NimbleChat', style: TextStyle(fontSize: 55),),
       ),
       body: 
         Container(
@@ -71,7 +71,7 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
                 Padding(
-                    padding: EdgeInsets.all(20.0),
+                    padding: EdgeInsets.all(10.0),
                     child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 25),),
                 ),
                 Padding(
@@ -103,16 +103,27 @@ class _HomeState extends State<Home> {
                             ),
                         ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                        createUser(usernameController.text, pwController.text);
-                    },
-                    child: const Text('Sign Up'),
-                ),
-                ElevatedButton(
-                    onPressed: () => loginUser(usernameController.text, pwController.text),
-                    child: const Text('Login'),
-                ),
+                Row (
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                        Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: ElevatedButton(
+                                onPressed: () {
+                                    createUser(usernameController.text, pwController.text);
+                                },
+                                child: const Text('Sign Up'),
+                            ),
+                        ),
+                        Padding(
+                            padding: EdgeInsets.all(10.0),
+                            child: ElevatedButton(
+                                onPressed: () => loginUser(usernameController.text, pwController.text),
+                                child: const Text('Login'),
+                            ),
+                        ),
+                    ]
+                )
             ],
             )
         )
