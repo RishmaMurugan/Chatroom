@@ -74,7 +74,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   //some widgets        
                 Flexible(
                   child: FractionallySizedBox(
-                    heightFactor: 0.85,
+                    heightFactor: 0.9,
                     child: new ListView.builder(
                       controller: _scrollController,
                       reverse: false,
@@ -135,25 +135,39 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                   ),
                 ),
-                Row(
-                  children: <Widget>[
-                    Flexible(
-                      child: TextField(
-                        controller: messageController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Send a message',
+                Container(
+                  padding: EdgeInsets.all(10.0),
+                  child:
+                    new Row(
+                      children: <Widget>[
+                        Flexible(
+                          child: TextField(
+                            controller: messageController,
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                              labelText: 'Send a message',
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        sendMessage(widget.senderUsername, widget.conversation?.id, messageController.text);
-                        // _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
-                      },
-                      child: const Text('Send'),
-                    ),
-                  ]
+                        Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child:
+                                    ElevatedButton(
+                                        onPressed: () { sendMessage(widget.senderUsername, widget.conversation?.id, messageController.text);},
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20.0)
+                                            ),
+                                        ),
+                                        child: Text(
+                                            "Send",
+                                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                        ),
+                                    ),
+                            ),
+                      ]
+                    )
                 )
               ]
             );
