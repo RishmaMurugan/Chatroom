@@ -57,7 +57,7 @@ class _MessageScreenState extends State<MessageScreen> {
     ScrollController _scrollController = new ScrollController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Message Screen'),
+        title: const Text('Say Hi', style: TextStyle(fontSize: 25),),
       ),
       body: FutureBuilder<List<Message>>(
         future: getMessages(),

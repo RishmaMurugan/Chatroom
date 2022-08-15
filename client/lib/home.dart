@@ -62,40 +62,60 @@ class _HomeState extends State<Home> {
     TextEditingController pwController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nimble Chatroom'),
+        title: const Text('NimbleChat', style: TextStyle(fontSize: 25),),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          children: <Widget>[
-            TextField(
-              controller: usernameController,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Username',
-              ),
-            ),
-            TextField(
-              controller: pwController,
-              obscureText: true,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Password',
-              ),
-            ),
-            ElevatedButton(
-                onPressed: () {
-                    createUser(usernameController.text, pwController.text);
-                },
-                child: const Text('Sign Up'),
-            ),
-            ElevatedButton(
-                onPressed: () => loginUser(usernameController.text, pwController.text),
-                child: const Text('Login'),
-            ),
-          ],
+      body: 
+        Container(
+            width: MediaQuery.of(context).size.width, 
+            child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+                Padding(
+                    padding: EdgeInsets.all(20.0),
+                    child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 25),),
+                ),
+                Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: 
+                        FractionallySizedBox(
+                            widthFactor: 0.5,
+                            child: new TextField(
+                                controller: usernameController,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Username',
+                                ),
+                            ),
+                        ),
+                ),
+                Padding(
+                    padding: EdgeInsets.all(10.0),
+                    child: 
+                        FractionallySizedBox(
+                            widthFactor: 0.5,
+                            child: new  TextField(
+                                controller: pwController,
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    border: OutlineInputBorder(),
+                                    labelText: 'Password',
+                                ),
+                            ),
+                        ),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                        createUser(usernameController.text, pwController.text);
+                    },
+                    child: const Text('Sign Up'),
+                ),
+                ElevatedButton(
+                    onPressed: () => loginUser(usernameController.text, pwController.text),
+                    child: const Text('Login'),
+                ),
+            ],
+            )
         )
-      )
-    );
+      );
   }
 }

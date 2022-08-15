@@ -61,7 +61,7 @@ class _UserHomeState extends State<UserHome> {
     TextEditingController recipientsController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Messages'),
+        title: const Text('Messages', style: TextStyle(fontSize: 25),),
       ),
       body: FutureBuilder<List<Conversation>>(
         future:  getConversations(widget.username),
