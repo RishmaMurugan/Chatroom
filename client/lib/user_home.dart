@@ -18,6 +18,7 @@ class UserHome extends StatefulWidget {
 class _UserHomeState extends State<UserHome> {
   List<Conversation> conversations = [];
   Conversation? selectedConversation = new Conversation("", "", "");
+  String groupParticipants = "";
 
   @override
   void initState() {
@@ -49,7 +50,7 @@ class _UserHomeState extends State<UserHome> {
       selectedConversation = conversation; 
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => MessageScreen(conversation: this.selectedConversation, senderUsername: senderUsername)),
+        MaterialPageRoute(builder: (context) => MessageScreen(conversation: this.selectedConversation, senderUsername: senderUsername, groupParticipants: groupParticipants)),
       );
     } 
   }
@@ -108,7 +109,7 @@ class _UserHomeState extends State<UserHome> {
                                   selectedConversation = data?[index];
                                   Navigator.push(
                                     context,
-                                    MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username)),
+                                    MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username, groupParticipants: s)),
                                   );
                                 },
                               ),

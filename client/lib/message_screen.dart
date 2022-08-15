@@ -9,7 +9,8 @@ import 'package:client/conversation_model.dart';
 class MessageScreen extends StatefulWidget {
   final Conversation? conversation;
   final String senderUsername;
-  const MessageScreen({Key? key, this.conversation, required this.senderUsername}) : super(key: key);
+  final String groupParticipants;
+  const MessageScreen({Key? key, this.conversation, required this.senderUsername, required this.groupParticipants}) : super(key: key);
 
   @override
   _MessageScreenState createState() => _MessageScreenState();
@@ -57,7 +58,7 @@ class _MessageScreenState extends State<MessageScreen> {
     ScrollController _scrollController = new ScrollController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Say Hi', style: TextStyle(fontSize: 25),),
+        title: const Text('Say Hi', style: TextStyle(fontSize: 35),),
       ),
       body: FutureBuilder<List<Message>>(
         future: getMessages(),
@@ -66,6 +67,10 @@ class _MessageScreenState extends State<MessageScreen> {
             List<Message>? data = snapshot.data;
             return Column(
               children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(widget.groupParticipants, style: TextStyle(fontSize: 20),),
+                ),
                   //some widgets        
                 Flexible(
                   child: FractionallySizedBox(
