@@ -17,18 +17,22 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   final List<Message> messages = [];
+
   @override
   void initState() {
     super.initState();
   }
 
   Future<List<Message>> getMessages() async {
-    for (final messageId in widget.conversation?.messageIds) {
-      http.Response res = (await ApiService().getMessage(messageId));
-      if (res.statusCode == 200) {
-        var messageJson = json.decode(res.body);
-        var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
-        messages.add(message);
+    print(messages.length);
+    if (messages.length == 0) {
+      for (final messageId in widget.conversation?.messageIds) {
+        http.Response res = (await ApiService().getMessage(messageId));
+        if (res.statusCode == 200) {
+          var messageJson = json.decode(res.body);
+          var message = new Message(messageJson['id'], messageJson['content'], messageJson['sendTime'], messageJson['senderUsername']);
+          messages.add(message);
+        }
       }
     }
     return messages;
@@ -51,6 +55,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController messageController = new TextEditingController();
+    ScrollController _scrollController = new ScrollController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Message Screen'),
@@ -60,13 +65,15 @@ class _MessageScreenState extends State<MessageScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Message>? data = snapshot.data;
-            return Row(
+            return Column(
               children: <Widget>[
                   //some widgets        
                 Flexible(
-                  child: SizedBox(
-                    width: 200.0,
+                  child: FractionallySizedBox(
+                    heightFactor: 0.85,
                     child: new ListView.builder(
+                      controller: _scrollController,
+                      reverse: false,
                       scrollDirection: Axis.vertical,
                       itemCount: data?.length,
                       itemBuilder: (context, index) {
@@ -79,21 +86,26 @@ class _MessageScreenState extends State<MessageScreen> {
                     ),
                   ),
                 ),
-                Flexible(
-                  child: TextField(
-                    controller: messageController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Send a message',
+                Row(
+                  children: <Widget>[
+                    Flexible(
+                      child: TextField(
+                        controller: messageController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Send a message',
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    sendMessage(widget.senderUsername, widget.conversation?.id, messageController.text);
-                  },
-                  child: const Text('Send'),
-                ),
+                    ElevatedButton(
+                      onPressed: () {
+                        sendMessage(widget.senderUsername, widget.conversation?.id, messageController.text);
+                        // _scrollController.animateTo(_scrollController.position.maxScrollExtent, duration: const Duration(milliseconds: 500), curve: Curves.easeOut);
+                      },
+                      child: const Text('Send'),
+                    ),
+                  ]
+                )
               ]
             );
           } else if (snapshot.hasError) {
