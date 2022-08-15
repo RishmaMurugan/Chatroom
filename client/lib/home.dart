@@ -62,7 +62,7 @@ class _HomeState extends State<Home> {
     TextEditingController pwController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('NimbleChat', style: TextStyle(fontSize: 55),),
+        title: const Text('NimbleChat', style: TextStyle(fontSize: 25),),
       ),
       body: 
         Container(
@@ -72,7 +72,7 @@ class _HomeState extends State<Home> {
             children: <Widget>[
                 Padding(
                     padding: EdgeInsets.all(10.0),
-                    child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 25),),
+                    child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 35),),
                 ),
                 Padding(
                     padding: EdgeInsets.all(10.0),

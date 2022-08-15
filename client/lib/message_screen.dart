@@ -110,7 +110,25 @@ class _MessageScreenState extends State<MessageScreen> {
           } else if (snapshot.hasError) {
             return Text("${snapshot.error}");
           }
-          return CircularProgressIndicator();
+          return Container(
+            width: MediaQuery.of(context).size.width, 
+            child:
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row (
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                          padding: EdgeInsets.all(10.0),
+                          child: CircularProgressIndicator(),
+                      ),
+                    ]
+                  )
+                ]
+              )              
+          );
         }
       )
     );
