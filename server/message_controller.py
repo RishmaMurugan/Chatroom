@@ -2,13 +2,16 @@ from datetime import datetime
 import uuid
 import psycopg2
 import psycopg2.extras
+import json
 
-hostname = "localhost"
-database = "chatroom"
-user = "postgres"
-db_password="test1234"
-port_id = 5432
-conn = None
+f = open('db_config.json')
+data = json.load(f)
+hostname = data['hostname']
+database = data['database']
+user = data['user']
+db_password = data['db_password']
+port_id = data['port_id']
+conn = data['conn']
 
 def createMessage(sender_id, content):
     try:
@@ -21,7 +24,6 @@ def createMessage(sender_id, content):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                # cur.execute('DROP TABLE IF EXISTS messages')
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS messages (
                         id UUID PRIMARY KEY,

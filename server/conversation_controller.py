@@ -1,13 +1,18 @@
 import uuid
 import psycopg2
 import psycopg2.extras
+import json
 
-hostname = "localhost"
-database = "chatroom"
-user = "postgres"
-db_password="test1234"
-port_id = 5432
-conn = None
+f = open('db_config.json')
+data = json.load(f)
+hostname = data['hostname']
+database = data['database']
+user = data['user']
+db_password = data['db_password']
+port_id = data['port_id']
+conn = data['conn']
+
+print(hostname, database, user, db_password, port_id, conn)
 
 def createConversation(user_ids, initialMessageId):
     try:

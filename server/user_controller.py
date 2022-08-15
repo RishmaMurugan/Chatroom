@@ -2,13 +2,16 @@ import uuid
 import psycopg2
 import psycopg2.extras
 import hashlib
+import json
 
-hostname = "localhost"
-database = "chatroom"
-user = "postgres"
-db_password="test1234"
-port_id = 5432
-conn = None
+f = open('db_config.json')
+data = json.load(f)
+hostname = data['hostname']
+database = data['database']
+user = data['user']
+db_password = data['db_password']
+port_id = data['port_id']
+conn = data['conn']
 
 def createUser(username, user_pw):
     try:
@@ -21,8 +24,6 @@ def createUser(username, user_pw):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                # cur.execute('DROP TABLE IF EXISTS users')
-
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS users (
                         id UUID PRIMARY KEY,

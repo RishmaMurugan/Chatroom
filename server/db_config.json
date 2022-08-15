@@ -1,0 +1,8 @@
+{
+    "hostname" : "localhost",
+    "database" : "chatroom",
+    "user" : "postgres",
+    "db_password" : "test1234",
+    "port_id" : 5432,
+    "conn" : "None"
+}
