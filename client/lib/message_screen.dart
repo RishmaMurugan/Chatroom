@@ -55,7 +55,6 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     TextEditingController messageController = new TextEditingController();
     ScrollController _scrollController = new ScrollController();
-    print("here");
     return Scaffold(
       appBar: AppBar(
         title: const Text('Message Screen'),

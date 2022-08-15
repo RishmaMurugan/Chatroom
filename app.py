@@ -56,7 +56,6 @@ class Conversation(Resource):
                     addConvoStatus = user_controller.addConversationToUser(user_id, conversation_status[0])
                     if (addConvoStatus[1] != 200): 
                         return "Error adding conversation to user profile", 400
-                print(conversation_status[0])
                 return conversation_status[0], 200
         else:
             return "Error sending message", 400

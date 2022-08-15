@@ -66,15 +66,7 @@ def getMessage(message_id):
                 get_pw_script = 'SELECT id, content, sendTime, senderId FROM messages WHERE id=%s'
                 cur.execute(get_pw_script, (message_id, ))
                 res = cur.fetchall()
-                print(res)
-                # message_ids = []
-                # for user_id in res[0][1]:
-                #     user_ids.append(str(user_id))
-                # message_ids = []
-                # for message_id in res[0][2]:
-                #     message_ids.append(str(message_id))
                 conversation = {"id": str(res[0][0]), "content": res[0][1], "sendTime": str(res[0][2]), "senderId": str(res[0][3])}
-                print(conversation)
                 if res is not None:
                     return conversation, 200
                 else:
