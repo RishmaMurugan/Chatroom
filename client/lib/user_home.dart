@@ -119,30 +119,60 @@ class _UserHomeState extends State<UserHome> {
                     ),
                   ]
                 ),
-                Flexible(
-                  child: TextField(
-                    controller: recipientsController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Message Recipients',
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text('Start a new conversation!', style: TextStyle(fontSize: 20),),
                     ),
-                  ),
-                ),
-                Flexible(
-                  child: TextField(
-                    controller: newMessageController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Type your message here',
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        width: 600.0,
+                        child: new TextField(
+                          controller: recipientsController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                            labelText: 'Message Recipients',
+                          ),
+                        ),   
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        width: 600.0,
+                        child: new TextField(
+                          controller: newMessageController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                            labelText: 'Type your message here',
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: SizedBox(
+                        width: 600.0,
+                        child: new ElevatedButton(
+                          onPressed: () {
+                            createConversation(widget.username, newMessageController.text, recipientsController.text);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0)
+                            ),
+                          ),
+                          child: const Text('Send'),
+                        ),
+                      ),
+                    ),
+                  ]
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    createConversation(widget.username, newMessageController.text, recipientsController.text);
-                  },
-                  child: const Text('Send'),
-                ),
+                
               ],
             );
           } else if (snapshot.hasError) {
