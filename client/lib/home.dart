@@ -68,63 +68,81 @@ class _HomeState extends State<Home> {
         Container(
             width: MediaQuery.of(context).size.width, 
             child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-                Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 35),),
-                ),
-                Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: 
-                        FractionallySizedBox(
-                            widthFactor: 0.5,
-                            child: new TextField(
-                                controller: usernameController,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Username',
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: Text('Welcome to NimbleChat!', style: TextStyle(fontSize: 35),),
+                    ),
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: 
+                            FractionallySizedBox(
+                                widthFactor: 0.5,
+                                child: new TextField(
+                                    controller: usernameController,
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                                        labelText: 'Username',
+                                    ),
                                 ),
                             ),
-                        ),
-                ),
-                Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: 
-                        FractionallySizedBox(
-                            widthFactor: 0.5,
-                            child: new  TextField(
-                                controller: pwController,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    labelText: 'Password',
+                    ),
+                    Padding(
+                        padding: EdgeInsets.all(10.0),
+                        child: 
+                            FractionallySizedBox(
+                                widthFactor: 0.5,
+                                child: new  TextField(
+                                    controller: pwController,
+                                    obscureText: true,
+                                    decoration: InputDecoration(
+                                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+                                        labelText: 'Password',
+                                    ),
                                 ),
                             ),
-                        ),
-                ),
-                Row (
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                        Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: ElevatedButton(
-                                onPressed: () {
-                                    createUser(usernameController.text, pwController.text);
-                                },
-                                child: const Text('Sign Up'),
+                    ),
+                    Row (
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                            Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child:
+                                    ElevatedButton(
+                                        onPressed: () => loginUser(usernameController.text, pwController.text),
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20.0)
+                                            ),
+                                        ),
+                                        child: Text(
+                                            "Login",
+                                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                        ),
+                                    ),
                             ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.all(10.0),
-                            child: ElevatedButton(
-                                onPressed: () => loginUser(usernameController.text, pwController.text),
-                                child: const Text('Login'),
+                            Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child:
+                                    ElevatedButton(
+                                        onPressed: () {createUser(usernameController.text, pwController.text);},
+                                        style: ElevatedButton.styleFrom(
+                                            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(20.0)
+                                            ),
+                                        ),
+                                        child: Text(
+                                            "Sign up",
+                                            style: TextStyle(color: Colors.white, fontSize: 18),
+                                        ),
+                                    ),
                             ),
-                        ),
-                    ]
-                )
-            ],
+                        ]
+                    )
+                ],
             )
         )
       );

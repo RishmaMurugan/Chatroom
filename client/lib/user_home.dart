@@ -70,38 +70,61 @@ class _UserHomeState extends State<UserHome> {
             List<Conversation>? data = snapshot.data;
             return Row(
               children: <Widget>[
-                  //some widgets        
-                Flexible(
-                  child: SizedBox(
-                    width: 200.0,
-                    child: new ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemCount: data?.length,
-                      itemBuilder: (context, index) {
-                        String s = "";
-                        bool isGroupChat = data?[index].usernames?.length > 2;
-                        int numPeople = 0;
-                        for (int i = 0; i < data?[index].usernames.length; i++) {
-                          var participantUsername = data?[index].usernames[i];
-                          if (participantUsername != widget.username) {
-                            numPeople++;
-                            s += participantUsername.toString() + " ";
-                            if (isGroupChat && numPeople != data?[index].usernames.length - 1) {
-                              s += "+ ";
+                Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: EdgeInsets.all(10.0),
+                      child: Text('Your Conversations:', style: TextStyle(fontSize: 20),),
+                    ),
+                    Flexible(
+                      child: SizedBox(
+                        width: 300.0,
+                        child: new ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          itemCount: data?.length,
+                          itemBuilder: (context, index) {
+                            String s = "";
+                            bool isGroupChat = data?[index].usernames?.length > 2;
+                            int numPeople = 0;
+                            for (int i = 0; i < data?[index].usernames.length; i++) {
+                              var participantUsername = data?[index].usernames[i];
+                              if (participantUsername != widget.username) {
+                                numPeople++;
+                                s += participantUsername.toString() + " ";
+                                if (isGroupChat && numPeople != data?[index].usernames.length - 1) {
+                                  s += "+ ";
+                                }
+                              }
                             }
-                          }
-                        }
-                        return ListTile(
-                          title: Text(s),
-                          onTap: () {
-                            selectedConversation = data?[index];
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username)),
+                            return Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                              child: 
+                                ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                                tileColor: Colors.teal[100],
+                                title: Text(s),
+                                onTap: () {
+                                  selectedConversation = data?[index];
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username)),
+                                  );
+                                },
+                              ),
                             );
-                          },
-                        );
-                      }
+                          }
+                        ),
+                      ),
+                    ),
+                  ]
+                ),
+                Flexible(
+                  child: TextField(
+                    controller: recipientsController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Message Recipients',
                     ),
                   ),
                 ),
@@ -111,15 +134,6 @@ class _UserHomeState extends State<UserHome> {
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Type your message here',
-                    ),
-                  ),
-                ),
-                Flexible(
-                  child: TextField(
-                    controller: recipientsController,
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Create a new conversation with...',
                     ),
                   ),
                 ),
