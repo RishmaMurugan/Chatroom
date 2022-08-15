@@ -15,4 +15,5 @@ Next Steps:
 - Automatically trigger frontend changes when database is updated
 - Add more message functionality (forward, delete)
 - Allow users to change their passwords, delete their accounts
+- Message encryption (so messages aren't stored in plaintext in the database)
 
