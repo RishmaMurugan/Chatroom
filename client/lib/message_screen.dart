@@ -58,7 +58,7 @@ class _MessageScreenState extends State<MessageScreen> {
     ScrollController _scrollController = new ScrollController();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Say Hi', style: TextStyle(fontSize: 35),),
+        title: const Text('Say Hi', style: TextStyle(fontSize: 25),),
       ),
       body: FutureBuilder<List<Message>>(
         future: getMessages(),
@@ -83,9 +83,54 @@ class _MessageScreenState extends State<MessageScreen> {
                       itemBuilder: (context, index) {
                         String sender = data?[index].senderUsername ;
                         String content = data?[index].content ;
-                        return ListTile(
-                          title: Text(sender + ": " + content),
-                        );
+                        if (sender == widget.senderUsername) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 7.5),
+                            child:
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: 
+                                  ListTile(
+                                    title: Text(content, style: TextStyle(fontSize: 18), textAlign: TextAlign.right,),
+                                    shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20)),
+                                    tileColor: Colors.teal[50],
+                                    
+                                  )
+                              )
+                          );
+                        } 
+                        else {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 7.5),
+                            child:
+                              Card(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                child: 
+                                  ListTile(
+                                    title: RichText(
+                                      text: TextSpan(
+                                        style: const TextStyle(
+                                          fontSize: 18.0,
+                                          color: Colors.black,
+                                        ),
+                                        children: <TextSpan>[
+                                          TextSpan(text: sender, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                          TextSpan(text: " - " + content),
+                                        ],
+                                      ),
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(20)),
+                                    tileColor: Colors.teal[100],
+                                  )
+                              )
+                          );
+                        }
                       }
                     ),
                   ),
