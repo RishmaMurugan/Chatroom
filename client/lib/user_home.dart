@@ -97,22 +97,24 @@ class _UserHomeState extends State<UserHome> {
                                 }
                               }
                             }
-                            return Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                            return Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
                               child: 
                                 ListTile(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20)),
-                                tileColor: Colors.teal[100],
-                                title: Text(s),
-                                onTap: () {
-                                  selectedConversation = data?[index];
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username, groupParticipants: s)),
-                                  );
-                                },
-                              ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
+                                  tileColor: Colors.teal[100],
+                                  title: Text(s),
+                                  onTap: () {
+                                    selectedConversation = data?[index];
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username, groupParticipants: s)),
+                                    );
+                                  },
+                                ),
                             );
                           }
                         ),
