@@ -1,17 +1,15 @@
-import json
 import uuid
 import psycopg2
 import psycopg2.extras
-from flask import jsonify
 
+hostname = "localhost"
+database = "chatroom"
+user = "postgres"
+db_password="test1234"
+port_id = 5432
+conn = None
 
 def createConversation(user_ids, initialMessageId):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -22,7 +20,6 @@ def createConversation(user_ids, initialMessageId):
             port = port_id) as conn: 
         
             with conn.cursor(cursor_factory=psycopg2.extras.DictCursor) as cur:
-                # cur.execute('DROP TABLE IF EXISTS conversations')
                 create_script = ''' 
                     CREATE TABLE IF NOT EXISTS conversations (
                         id UUID PRIMARY KEY,
@@ -46,14 +43,7 @@ def createConversation(user_ids, initialMessageId):
         if conn is not None:
             conn.close()
 
-
 def addMessage(message_id, conversation_id):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -77,12 +67,6 @@ def addMessage(message_id, conversation_id):
             conn.close()
 
 def getConversation(conversation_id):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -114,5 +98,3 @@ def getConversation(conversation_id):
         if conn is not None:
             conn.close()
 
-
-# cur.execute('DROP TABLE IF EXISTS users')

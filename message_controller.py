@@ -2,16 +2,15 @@ from datetime import datetime
 import uuid
 import psycopg2
 import psycopg2.extras
-import hashlib
 
+hostname = "localhost"
+database = "chatroom"
+user = "postgres"
+db_password="test1234"
+port_id = 5432
+conn = None
 
 def createMessage(sender_id, content):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -47,12 +46,6 @@ def createMessage(sender_id, content):
 
 
 def getMessage(message_id):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(

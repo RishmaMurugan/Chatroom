@@ -3,14 +3,14 @@ import psycopg2
 import psycopg2.extras
 import hashlib
 
+hostname = "localhost"
+database = "chatroom"
+user = "postgres"
+db_password="test1234"
+port_id = 5432
+conn = None
 
 def createUser(username, user_pw):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -49,12 +49,6 @@ def createUser(username, user_pw):
             conn.close()
 
 def loginUser(username, input_pw):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         with psycopg2.connect(
             host = hostname,
@@ -81,12 +75,6 @@ def loginUser(username, input_pw):
             conn.close()
 
 def getUserId(username):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -113,12 +101,6 @@ def getUserId(username):
             conn.close()
 
 def getUsername(id):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -145,12 +127,6 @@ def getUsername(id):
             conn.close()
 
 def addConversationToUser(user_id, conversation_id):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
@@ -177,12 +153,6 @@ def addConversationToUser(user_id, conversation_id):
             conn.close()
 
 def getUserConversations(username):
-    hostname = "localhost"
-    database = "chatroom"
-    user = "postgres"
-    db_password="test1234"
-    port_id = 5432
-    conn = None
     try:
         psycopg2.extras.register_uuid()
         with psycopg2.connect(
