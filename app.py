@@ -41,7 +41,7 @@ class Conversation(Resource):
             user_id_status = user_controller.getUserId(username)
             if (user_id_status[1] == 200):
                 user_ids.append(uuid.UUID(user_id_status[0]))
-            else: 
+            else:
                 return "Error getting recipient information", 400
         sender_id_status = user_controller.getUserId(sender_username)
         if (sender_id_status[1] == 200):
@@ -56,7 +56,8 @@ class Conversation(Resource):
                     addConvoStatus = user_controller.addConversationToUser(user_id, conversation_status[0])
                     if (addConvoStatus[1] != 200): 
                         return "Error adding conversation to user profile", 400
-                return "Success sending message", 200
+                print(conversation_status[0])
+                return conversation_status[0], 200
         else:
             return "Error sending message", 400
 

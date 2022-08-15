@@ -6,12 +6,23 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'dart:convert';
 
-class UserHome extends StatelessWidget {
-  UserHome({super.key, required this.username});
 
+class UserHome extends StatefulWidget {
   final String username;
+  const UserHome({Key? key, required this.username}) : super(key: key);
+
+  @override
+  _UserHomeState createState() => _UserHomeState();
+}
+
+class _UserHomeState extends State<UserHome> {
   List<Conversation> conversations = [];
   Conversation? selectedConversation = new Conversation("", "", "");
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   Future<List<Conversation>> getConversations(String username) async {
     http.Response res = (await ApiService().getConversationIds(username));
@@ -28,14 +39,32 @@ class UserHome extends StatelessWidget {
     return [];
   }
 
+  void createConversation(String senderUsername, String content, String usernamesString) async {
+    http.Response res = (await ApiService().createConversation(senderUsername, content, usernamesString));
+    if (res.statusCode == 200) {
+      var conversationId = json.decode(res.body);
+      http.Response res2 = (await ApiService().getConversations(conversationId));
+      var conversationJson = json.decode(res2.body);
+      var conversation = new Conversation(conversationJson['id'], conversationJson['message_ids'], conversationJson['usernames']);
+      selectedConversation = conversation; 
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => MessageScreen(conversation: this.selectedConversation, senderUsername: senderUsername)),
+      );
+    } 
+  }
+
   @override
   Widget build(BuildContext context) {
+    TextEditingController messageController = new TextEditingController();
+    TextEditingController newMessageController = new TextEditingController();
+    TextEditingController recipientsController = new TextEditingController();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Messages'),
       ),
       body: FutureBuilder<List<Conversation>>(
-        future:  getConversations(this.username),
+        future:  getConversations(widget.username),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Conversation>? data = snapshot.data;
@@ -54,7 +83,7 @@ class UserHome extends StatelessWidget {
                         int numPeople = 0;
                         for (int i = 0; i < data?[index].usernames.length; i++) {
                           var participantUsername = data?[index].usernames[i];
-                          if (participantUsername != this.username) {
+                          if (participantUsername != widget.username) {
                             numPeople++;
                             s += participantUsername.toString() + " ";
                             if (isGroupChat && numPeople != data?[index].usernames.length - 1) {
@@ -68,7 +97,7 @@ class UserHome extends StatelessWidget {
                             selectedConversation = data?[index];
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: this.username)),
+                              MaterialPageRoute(builder: (context) => MessageScreen(conversation: selectedConversation, senderUsername: widget.username)),
                             );
                           },
                         );
@@ -76,9 +105,30 @@ class UserHome extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Flexible(
-                //   child: MessageScreen(conversation: selectedConversation)
-                // )
+                Flexible(
+                  child: TextField(
+                    controller: newMessageController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Type your message here',
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: TextField(
+                    controller: recipientsController,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Create a new conversation with...',
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    createConversation(widget.username, newMessageController.text, recipientsController.text);
+                  },
+                  child: const Text('Send'),
+                ),
               ],
             );
           } else if (snapshot.hasError) {

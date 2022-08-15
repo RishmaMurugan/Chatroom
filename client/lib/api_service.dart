@@ -39,6 +39,20 @@ Future<http.Response> getConversations(String id) {
         Uri.parse('http://127.0.0.1:5000/conversation?id=$id'),
     );
 }
+Future<http.Response> createConversation(String senderUsername, String content, String usernamesString) {
+    List<String> usernames = usernamesString.split(',');
+    return http.post(
+        Uri.parse('http://127.0.0.1:5000/conversation'),
+        headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode({
+            'sender_username': senderUsername,
+            'content': content,
+            'usernames': usernames,
+        }),
+    );
+}
 Future<http.Response> sendMessage(String senderUsername, String conversationId, String content) {
     return http.patch(
         Uri.parse('http://127.0.0.1:5000/conversation'),
